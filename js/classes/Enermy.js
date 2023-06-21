@@ -18,7 +18,6 @@ class Enermy extends Sprite {
         return img;
       }),
     }
-    this.isDead = false;
     this.framesPerSecond = 2
   }
 }

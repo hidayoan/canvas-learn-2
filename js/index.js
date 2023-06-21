@@ -82,28 +82,33 @@ const enermies = Array(50).fill().map(() => {
 });
 
 const generateEnermy = () => {
-  let x = Math.random() * canvas.width;
-  while (x + 100 > player.x && x - 50 < player.x) {
-    x = Math.random() * canvas.width;
+  const totalEnermies = Math.floor(Math.random() * 20) + 1;
+  console.log(totalEnermies);
+  for (let i = 0; i < totalEnermies; i++) {
+    let x = Math.random() * canvas.width;
+    while (x + 30 > player.x && x - 30 < player.x) {
+      x = Math.random() * canvas.width;
+    }
+    let y = Math.random() * canvas.height;
+    while (y + 30 > player.y && y - 30 < player.y) {
+      y = Math.random() * canvas.height;
+    }
+    enermies.push(new Enermy({
+      position: {
+        x: x,
+        y: y
+      },
+      size: {
+        width: 50,
+        height: 50
+      },
+      color: 'red'
+    }));
   }
-  let y = Math.random() * canvas.height;
-  while (y + 100 > player.y && y - 50 < player.y) {
-    y = Math.random() * canvas.height;
-  }
-  enermies.push(new Enermy({
-    position: {
-      x: x,
-      y: y
-    },
-    size: {
-      width: 50,
-      height: 50
-    },
-    color: 'red'
-  }));
 }
 
 const animate = () => {
+  const status = document.getElementById('status');
   count++;
   ctx.fillStyle = 'black'
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
@@ -121,29 +126,43 @@ const animate = () => {
   enermies.forEach((enermy) => {
     enermy.update();
     // check player collision
-    let check = player.checkCollisionBullets(enermy);
-    if (check) {
-      enermy.isDead = true;
-      enermy.changeState('dead');
 
-      setTimeout(() => {
-        enermies.splice(enermies.indexOf(enermy), 1);
-      }
-      , 1500);
+    const checkUserDead = checkCollision(player, enermy);
+    if (checkUserDead) {
+      status.innerHTML = 'Game Over';
+      player.isDead = true;
+      player.changeState('dead');
     }
-    
+
+    if (!player.isDead) {
+      let check = player.checkCollisionBullets(enermy);
+      if (check) {
+        player.score++;
+        status.innerHTML = `Score: ${player.score}`;
+        enermy.isDead = true;
+        enermy.changeState('dead');
+  
+        setTimeout(() => {
+          enermies.splice(enermies.indexOf(enermy), 1);
+        }
+          , 1500);
+      }
+    }
+
   });
 
   player.update();
 
-  if (KEYS.KEY_W.pressed) {
-    player.velocity.y = -MOVE_SPEED;
-  } else if (KEYS.KEY_S.pressed) {
-    player.velocity.y = MOVE_SPEED;
-  } else if (KEYS.KEY_A.pressed) {
-    player.velocity.x = -MOVE_SPEED;
-  } else if (KEYS.KEY_D.pressed) {
-    player.velocity.x = MOVE_SPEED;
+  if (!player.isDead) {
+    if (KEYS.KEY_W.pressed) {
+      player.velocity.y = -MOVE_SPEED;
+    } else if (KEYS.KEY_S.pressed) {
+      player.velocity.y = MOVE_SPEED;
+    } else if (KEYS.KEY_A.pressed) {
+      player.velocity.x = -MOVE_SPEED;
+    } else if (KEYS.KEY_D.pressed) {
+      player.velocity.x = MOVE_SPEED;
+    }
   }
 }
 
@@ -204,6 +223,7 @@ window.addEventListener('mousemove', (event) => {
 
 window.addEventListener('click', (event) => {
   if (event.button === 0) {
+    if (player.isDead) return;
     player.addBullet();
   }
 });

@@ -18,6 +18,7 @@ const MOVE_SPEED = 5;
 const PLAYER_ASSETS = {
   idle: new Array(20).fill().map((_, i) => `assets/images/player/idle/survivor-idle_shotgun_${i}.png`),
   move: new Array(20).fill().map((_, i) => `assets/images/player/move/survivor-move_shotgun_${i}.png`),
+  dead: ['assets/images/corpse.png']
 }
 
 const ZOMBIE_ASSETS = {

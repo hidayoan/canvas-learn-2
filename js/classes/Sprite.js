@@ -5,6 +5,9 @@ class Sprite {
 
     this.width = size.width;
     this.height = size.height;
+    this.isDead = false;
+
+    this.score = 0;
 
     this.color = color;
 
@@ -36,14 +39,17 @@ class Sprite {
         const img = new Image();
         img.src = src;
         return img;
-      }
-      ),
+      }),
       move: PLAYER_ASSETS.move.map(src => {
         const img = new Image();
         img.src = src;
         return img;
-      }
-      )
+      }),
+      dead: PLAYER_ASSETS.dead.map(src => {
+        const img = new Image();
+        img.src = src;
+        return img;
+      }),
     }
   }
 
